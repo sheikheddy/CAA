@@ -10,7 +10,7 @@ from helpers import (
 def test_add_vector_after_position():
     matrix = t.tensor([[1, 2], [3, 4], [5, 6]], dtype=t.float32)
     vector = t.tensor([1, 1], dtype=t.float32)
-    position_ids = t.tensor([1, 2, 3])
+    position_ids = t.tensor([0, 1, 2])
     result = add_vector_after_position(
         matrix, vector, position_ids, after=1
     )
