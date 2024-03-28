@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 from utils.helpers import add_vector_after_position, find_instruction_end_postion, get_model_path
-from utils.tokenize import (
+from utils.tokenize_ import (
     tokenize_llama_chat,
     tokenize_llama_base,
     ADD_AFTER_POS_BASE,
@@ -41,6 +41,7 @@ class BlockOutputWrapper(t.nn.Module):
         self.tokenizer = tokenizer
 
         self.block.self_attn = AttnWrapper(self.block.self_attn)
+        self.self_attn = self.block.self_attn
         self.post_attention_layernorm = self.block.post_attention_layernorm
 
         self.attn_out_unembedded = None
@@ -117,6 +118,7 @@ class LlamaWrapper:
         size: str = "7b",
         use_chat: bool = True,
         override_model_weights_path: Optional[str] = None,
+        quant: Optional[int] = 4
     ):
         self.device = "cuda" if t.cuda.is_available() else "cpu"
         self.use_chat = use_chat
@@ -124,14 +126,23 @@ class LlamaWrapper:
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name_path, token=hf_token
         )
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name_path, token=hf_token
-        )
+        if quant == 4:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                f"TheBloke/Llama-2-{size}-chat-GPTQ", token=hf_token, device_map="auto"
+            )
+        elif quant == 8:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name_path, token=hf_token, device_map="auto", load_in_8bit=True
+            )
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name_path, token=hf_token, device_map="auto"
+            )
         if override_model_weights_path is not None:
             self.model.load_state_dict(t.load(override_model_weights_path))
-        if size != "7b":
-            self.model = self.model.half()
-        self.model = self.model.to(self.device)
+        # if size != "7b":
+        #     self.model = self.model.half()
+        # self.model = self.model.to(self.device)
         if use_chat:
             self.END_STR = t.tensor(self.tokenizer.encode(ADD_AFTER_POS_CHAT)[1:]).to(
                 self.device

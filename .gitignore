@@ -12,3 +12,4 @@ logs
 .DS_Store
 .hypothesis
 */.DS_Store
+pip*/
