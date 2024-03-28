@@ -15,7 +15,11 @@ def normalize_vectors(model_size: str, is_base: bool, n_layers: int):
         new_paths = {}
         for behavior in ALL_BEHAVIORS:
             vec_path = get_vector_path(behavior, layer, get_model_path(model_size, is_base=is_base))
-            vec = t.load(vec_path)
+            try:
+                vec = t.load(vec_path)
+            except FileNotFoundError:
+                print("Warning: skipping behavior", behavior)
+                continue
             norm = vec.norm().item()
             vecs[behavior] = vec
             norms[behavior] = norm
@@ -25,15 +29,20 @@ def normalize_vectors(model_size: str, is_base: bool, n_layers: int):
         mean_norm = t.tensor(list(norms.values())).mean().item()
         # normalize all vectors to have the same norm
         for behavior in ALL_BEHAVIORS:
+            if behavior not in vecs or behavior not in norms:
+                continue
             vecs[behavior] = vecs[behavior] * mean_norm / norms[behavior]
         # save the normalized vectors
         for behavior in ALL_BEHAVIORS:
+            if behavior not in vecs or behavior not in norms:
+                continue
             if not os.path.exists(os.path.dirname(new_paths[behavior])):
                 os.makedirs(os.path.dirname(new_paths[behavior]))
             t.save(vecs[behavior], new_paths[behavior])
     
     
 if __name__ == "__main__":
+    normalize_vectors("70b", False, 36)
     normalize_vectors("7b", True, 32)
     normalize_vectors("7b", False, 32)
     normalize_vectors("13b", False, 36)
