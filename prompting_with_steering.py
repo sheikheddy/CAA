@@ -13,7 +13,7 @@ import argparse
 from typing import List, Dict, Optional
 from tqdm import tqdm
 from utils.helpers import get_a_b_probs
-from utils.tokenize import E_INST
+from utils.tokenize_ import E_INST
 from steering_settings import SteeringSettings
 from behaviors import (
     get_open_ended_test_data,
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     parser.add_argument("--override_vector", type=int, default=None)
     parser.add_argument("--override_vector_model", type=str, default=None)
     parser.add_argument("--use_base_model", action="store_true", default=False)
-    parser.add_argument("--model_size", type=str, choices=["7b", "13b"], default="7b")
+    parser.add_argument("--model_size", type=str, choices=["7b", "13b", "70b"], default="7b")
     parser.add_argument("--override_model_weights_path", type=str, default=None)
     parser.add_argument("--overwrite", action="store_true", default=False)
     

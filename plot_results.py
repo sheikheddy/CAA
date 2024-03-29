@@ -127,7 +127,7 @@ def plot_ab_results_for_layer(
         except KeyError:
             pass
 
-def plot_finetuning_openended_comparison(settings: SteeringSettings, finetune_pos_path: str, finetune_neg_path: str, multipliers: list[float], layer: int):
+def plot_finetuning_openended_comparison(settings: SteeringSettings, finetune_pos_path: str, finetune_neg_path: str, multipliers, layer: int):
     save_to = os.path.join(
         get_analysis_dir(settings.behavior),
         f"finetune_comparison_{layer}_{settings.type}.png",
@@ -447,6 +447,15 @@ def plot_layer_sweeps(
             color="#ff7f00",
         )
 
+        # plot a line at the peak of the the steering curve and annotate the layer number on the x-axis with smaller font
+        neg_peak_layer = layers[neg_per_layer.index(min(neg_per_layer))]
+        plt.axvline(neg_peak_layer, color="red", linestyle="--", linewidth=0.5)
+        plt.text(neg_peak_layer, min(neg_per_layer), f"{neg_peak_layer}", fontsize=10, color="black", ha="center", bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.1'))
+
+        pos_peak_layer = layers[pos_per_layer.index(max(pos_per_layer))]
+        plt.axvline(pos_peak_layer, color="green", linestyle="--", linewidth=0.5)
+        plt.text(pos_peak_layer, max(pos_per_layer), f"{pos_peak_layer}", fontsize=10, color="black", ha="center", bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.1'))
+
     plt.plot(
         [],
         [],
@@ -462,7 +471,7 @@ def plot_layer_sweeps(
         linewidth=2,
         color="#ff7f00",
         label="Negative steering",
-    )
+    ) 
 
     # use % formatting for y axis
     plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.0%}"))
@@ -509,7 +518,7 @@ if __name__ == "__main__":
     parser.add_argument("--override_vector", type=int, default=None)
     parser.add_argument("--override_vector_model", type=str, default=None)
     parser.add_argument("--use_base_model", action="store_true", default=False)
-    parser.add_argument("--model_size", type=str, choices=["7b", "13b"], default="7b")
+    parser.add_argument("--model_size", type=str, choices=["7b", "13b", "70b"], default="7b")
     parser.add_argument("--override_weights", type=str, nargs="+", default=[])
     
     args = parser.parse_args()
