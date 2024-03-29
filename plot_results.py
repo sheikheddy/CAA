@@ -454,7 +454,7 @@ def plot_layer_sweeps(
 
         pos_peak_layer = layers[pos_per_layer.index(max(pos_per_layer))]
         plt.axvline(pos_peak_layer, color="green", linestyle="--", linewidth=0.5)
-        plt.text(pos_peak_layer, max(pos_per_layer), f"{pos_peak_layer}", fontsize=10, color="black", ha="center", bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.1'))
+        plt.text(pos_peak_layer + 1, max(pos_per_layer), f"{pos_peak_layer}", fontsize=10, color="black", ha="center", bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.1'))
 
     plt.plot(
         [],

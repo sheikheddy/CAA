@@ -106,7 +106,7 @@ def save_activation_projection_pca(behavior: str, layer: int, model_name_path: s
         label=f"neg {HUMAN_NAMES[behavior]} - B",
     )
 
-    plt.legend(handles=[scatter1, scatter2, scatter3, scatter4])
+    plt.legend(handles=[scatter1, scatter2, scatter3, scatter4], prop={'size': 8})
     plt.title(title)
     plt.xlabel("PC 1")
     plt.ylabel("PC 2")

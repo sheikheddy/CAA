@@ -4,7 +4,7 @@ Use CAA to steer the model
 Usage:
 python prompting_with_steering.py --behaviors sycophancy --layers 10 --multipliers 0.1 0.5 1 2 5 10 --type ab --use_base_model --model_size 7b
 """
-
+import cProfile
 import json
 from llama_wrapper import LlamaWrapper
 import os
@@ -171,7 +171,8 @@ def test_steering(
                 json.dump(results, f, indent=4)
 
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--layers", nargs="+", type=int, required=True)
     parser.add_argument("--multipliers", nargs="+", type=float, required=True)
@@ -214,3 +215,7 @@ if __name__ == "__main__":
             settings=steering_settings,
             overwrite=args.overwrite,
         )
+
+
+if __name__ == "__main__":
+    cProfile.run('main()', filename='profile_results.prof')
