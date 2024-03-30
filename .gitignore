@@ -13,6 +13,4 @@ logs
 .hypothesis
 */.DS_Store
 pip*/
-normalized_vectors/
-vectors/
 
