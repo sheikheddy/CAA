@@ -128,7 +128,7 @@ class LlamaWrapper:
         )
         if quant == 4:
             self.model = AutoModelForCausalLM.from_pretrained(
-                f"TheBloke/Llama-2-{size}-chat-GPTQ", token=hf_token, device_map="auto"
+                f"TheBloke/Llama-2-{size}-chat-GPTQ", token=hf_token, device_map={"":0}
             )
         elif quant == 8:
             self.model = AutoModelForCausalLM.from_pretrained(
